@@ -3,60 +3,16 @@
 -- Mandatory library extension!
 require("utility/library_extensions")
 
+-- Core utilities/LOVE functions
+require("utility/_init")
+require("utility/draw")
+require("utility/update")
+require("utility/control")
+
+-- Game data
+-- require("")
+
+-- Misc
+-- require("")
+
 --------------------------------------------------------------------------------
-
-
-
--- LOVE FUNCTIONS --------------------------------------------------------------
-
-function love.load()
-
-end
-
-
-
-function love.keypressed(key, code, rep)
-
-end
-
-
-
-function love.textinput(t)
-
-end
-
-
-
-function love.mousemoved(x, y, dx, dy)
-
-end
-
-
-
-function love.mousepressed(x, y, btn)
-
-end
-
-
-
-function love.mousereleased(x, y, btn)
-
-end
-
-
-
-function love.update(dt)
-
-end
-
-
-
-function love.draw()
-
-end
-
-
-
-function love.resize(w, h)
-
-end
