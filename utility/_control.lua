@@ -8,6 +8,11 @@ function love.keypressed(key, code, rep)
         love.event.push("quit", "restart")
         return
     end
+
+    if key:lower() == "z" then
+        game.attack_cd = true
+        game.fighter.one.attacking = true
+    end
 end
 
 

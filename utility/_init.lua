@@ -16,9 +16,9 @@ game.sprite = {}
 
 function init_graphics()
     game.sprite.testguy = {}
-    game.sprite.testguy.attack = love.graphics.newImage("graphics/testguy-attack.png")
-    game.sprite.testguy.hurt = love.graphics.newImage("graphics/testguy-hurt.png")
-    game.sprite.testguy.idle = love.graphics.newImage("graphics/testguy-idle.png")
+    game.sprite.testguy.attack = love.graphics.newImage("gfx/testguy-attack.png")
+    game.sprite.testguy.hurt =   love.graphics.newImage("gfx/testguy-hurt.png")
+    game.sprite.testguy.idle =   love.graphics.newImage("gfx/testguy-idle.png")
 end
 
 
