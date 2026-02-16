@@ -10,6 +10,7 @@ game.fighter = {}
 game.fighter.one = {
     health = 100,
     accuracy = 0,
+    speed = 1.0,
     poise = 0,
     resource = 0,
     stars = 0,
@@ -25,8 +26,9 @@ game.fighter.one = {
 }
 
 game.fighter.two = {
-    health = 100,
+    health = 90,
     accuracy = 0,
+    speed = 1.2,
     poise = 0,
     resource = 0,
     stars = 0,
@@ -166,7 +168,11 @@ function update_fighters(dt)
         elseif game.fighter[ply].charging_attack then
             -- 2. This fighter is charging an attack, therefore they gain accuracy.
             game.fighter[ply].state = game.fighterstate_preparing
-            game.fighter[ply].accuracy = math.clamp(game.fighter[ply].accuracy + (1 - dt), 0, 100)
+
+            local new_acc = game.fighter[ply].speed - dt
+            new_acc = new_acc * 0.55 -- slow down the accuracy generation just a little
+
+            game.fighter[ply].accuracy = math.clamp(game.fighter[ply].accuracy + new_acc, 0, 100)
         end
     end
 end
