@@ -41,7 +41,7 @@ function love.load()
 
     -- init_sound()
     -- init_music()
-    -- init_shader()
+    init_shader()
     init_graphics()
 
     game.canvas = love.graphics.newCanvas()
