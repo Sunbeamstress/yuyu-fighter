@@ -27,6 +27,7 @@ game.sound = {}
 function init_sound()
     game.sound.miss = love.audio.newSource("sound/miss.wav", "static")
     game.sound.blow = love.audio.newSource("sound/blow.wav", "static")
+    game.sound.star_generation = love.audio.newSource("sound/star_generation.wav", "static")
 end
 
 

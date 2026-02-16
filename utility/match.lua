@@ -7,7 +7,7 @@ game.match.star_delay = 3
 -- how many stars do we release each tick?
 game.match.star_release = 2
 -- time in seconds between lucky stars
-game.match.star_rate = 1
+game.match.star_rate = 3
 -- how many stars can be generated
 game.match.star_max = 100
 -- size, in pixels, of the starfield
@@ -20,7 +20,7 @@ function release_lucky_stars(num)
     game.match.free_luck = math.clamp(game.match.free_luck + num, 0, game.match.star_max)
 
     if game.match.free_luck > #ui.stars then
-        love.audio.play(game.sound.blow)
+        love.audio.play(game.sound.star_generation)
         for i = 1, num do
             table.insert(ui.stars, {x = math.random(game.match.star_range), y = math.random(game.match.star_range)})
         end
