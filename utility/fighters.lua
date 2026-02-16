@@ -22,13 +22,6 @@ game.state = {}
 game.state.accuracygen = 0
 
 function draw_fighters()
-    -- we draw the fighters to the screen here!
-    love.graphics.setColor( 1, 1, 1, 1 )
-    love.graphics.print(game.fighter.one.text, 0, 10, 0, 1, 1)
-    love.graphics.print(game.fighter.two.text, 300, 10, 0, 1, 1)
-    love.graphics.print("P1 Accuracy = %s" % {game.fighter.one.accuracy}, 0, 300, 0, 1, 1)
-    love.graphics.print("P2 Accuracy = %s" % {game.fighter.two.accuracy}, 300, 300, 0, 1, 1)
-
     if game.fighter.one.preparing then
         love.graphics.draw(game.sprite.testguy.prepare, 0, 0)
         game.fighter.one.accuracy = math.clamp(game.fighter.one.accuracy + 1, 0, 100)
