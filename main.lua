@@ -15,6 +15,7 @@ require("utility/_control")
 -- Game utilities
 require("utility/interface")
 require("utility/background")
+require("utility/characters")
 require("utility/fighters")
 
 -- Misc
