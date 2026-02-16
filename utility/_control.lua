@@ -11,7 +11,22 @@ function love.keypressed(key, code, rep)
 
     if key:lower() == "z" then
         if not game.attack_cd then
+            game.fighter.one.preparing = true
+        end
+    end
+    
+    if key:lower() == "x" then
+        if not game.attack_cd then
+            game.fighter.two.preparing = true
+        end
+    end
+end
+
+function love.keyreleased(key, code, rep)
+    if key:lower() == "z" then
+        if not game.attack_cd then
             game.attack_cd = true
+            game.fighter.one.preparing = false
             game.fighter.one.attacking = true
         end
     end
@@ -19,12 +34,11 @@ function love.keypressed(key, code, rep)
     if key:lower() == "x" then
         if not game.attack_cd then
             game.attack_cd = true
+            game.fighter.two.preparing = false
             game.fighter.two.attacking = true
         end
     end
 end
-
-
 
 function love.textinput(t)
 

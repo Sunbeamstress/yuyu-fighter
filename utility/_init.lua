@@ -19,11 +19,13 @@ function init_graphics()
     game.sprite.testguy.attack = love.graphics.newImage("gfx/testguy-attack.png")
     game.sprite.testguy.hurt =   love.graphics.newImage("gfx/testguy-hurt.png")
     game.sprite.testguy.idle =   love.graphics.newImage("gfx/testguy-idle.png")
+    game.sprite.testguy.prepare =   love.graphics.newImage("gfx/testguy-prepare.png")
 
     game.sprite.testguytwo = {}
     game.sprite.testguytwo.attack = love.graphics.newImage("gfx/testguy-attack.png")
     game.sprite.testguytwo.hurt =   love.graphics.newImage("gfx/testguy-hurt.png")
     game.sprite.testguytwo.idle =   love.graphics.newImage("gfx/testguy-idle.png")
+    game.sprite.testguytwo.prepare =   love.graphics.newImage("gfx/testguy-prepare.png")
 end
 
 
