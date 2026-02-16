@@ -15,10 +15,12 @@ require("utility/characters")
 
 -- Game utilities
 require("utility/color")
+require("utility/display")
 require("utility/interface")
 require("utility/background")
 require("utility/fighters")
 require("utility/debug")
 require("utility/controls")
+require("utility/match")
 
 --------------------------------------------------------------------------------

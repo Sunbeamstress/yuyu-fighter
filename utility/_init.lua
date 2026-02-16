@@ -10,9 +10,28 @@ game.window = {
 
 
 
+game.fonts = {}
+
+function init_fonts()
+    local font_file = "TerminusTTFWindows-4.49.3"
+    local smallfont_file = "QuinqueFive"
+
+    game.fonts.main = love.graphics.newFont("fonts/%s.ttf" % font_file, 12)
+    game.fonts.small = love.graphics.newFont("fonts/%s.ttf" % smallfont_file, 5)
+end
+
+
+
+game.sound = {}
+
+function init_sound()
+    game.sound.miss = love.audio.newSource("sound/miss.wav", "static")
+    game.sound.blow = love.audio.newSource("sound/blow.wav", "static")
+end
+
+
+
 game.sprite = {}
-
-
 
 function init_graphics()
     game.sprite.testguy = {}
@@ -41,7 +60,8 @@ function love.load()
         }
     )
 
-    -- init_sound()
+    init_fonts()
+    init_sound()
     -- init_music()
     init_shader()
     init_graphics()

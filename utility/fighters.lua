@@ -12,6 +12,7 @@ game.fighter.one = {
     accuracy = 0,
     poise = 0,
     resource = 0,
+    stars = 0,
     text = "",
     state = game.fighterstate_idle,
     x = 0,
@@ -28,6 +29,7 @@ game.fighter.two = {
     accuracy = 0,
     poise = 0,
     resource = 0,
+    stars = 0,
     text = "",
     state = game.fighterstate_idle,
     x = 640,
@@ -83,13 +85,18 @@ function fighter_attack_connected(ply)
 
     game.fighter[ply].text = "Hit!"
 
-    -- Calculate some damage. We'll let the attacks hit harder if they were
-    -- more accurate.
-    local dmg_base = 8 + (7 * (game.fighter[ply].accuracy / 100))
+    -- Calculate some damage. We'll let the attacks hit harder if they had more
+    -- stars when they released.
+    local dmg_base = 8 + (24 * (game.fighter[ply].stars / 100))
     local dmg = math.random(dmg_base, dmg_base + 5)
 
     fighter_attack_received(tar, dmg)
+    game.fighter[ply].text = "%s Dealt %d damage." % {game.fighter[ply].text, dmg}
     fighter_attack_cooldown(ply, 0.5)
+
+    absorb_lucky_stars(ply)
+
+    love.audio.play(game.sound.blow)
 end
 
 
@@ -111,6 +118,8 @@ end
 function fighter_attack_missed(ply)
     game.fighter[ply].text = "Missed."
     fighter_attack_cooldown(ply, 0.8)
+
+    love.audio.play(game.sound.miss)
 end
 
 
