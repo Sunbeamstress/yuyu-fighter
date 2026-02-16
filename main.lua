@@ -10,12 +10,12 @@ require("utility/_update")
 require("utility/_control")
 
 -- Game data
--- require("")
+require("utility/shaders")
+require("utility/characters")
 
 -- Game utilities
 require("utility/interface")
 require("utility/background")
-require("utility/characters")
 require("utility/fighters")
 
 -- Misc

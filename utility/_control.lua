@@ -10,13 +10,17 @@ function love.keypressed(key, code, rep)
     end
 
     if key:lower() == "z" then
-        game.attack_cd = true
-        game.fighter.one.attacking = true
+        if not game.attack_cd then
+            game.attack_cd = true
+            game.fighter.one.attacking = true
+        end
     end
     
     if key:lower() == "x" then
-        game.attack_cd = true
-        game.fighter.two.attacking = true
+        if not game.attack_cd then
+            game.attack_cd = true
+            game.fighter.two.attacking = true
+        end
     end
 end
 
