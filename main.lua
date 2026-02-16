@@ -18,6 +18,7 @@ require("utility/color")
 require("utility/interface")
 require("utility/background")
 require("utility/fighters")
+require("utility/debug")
 
 -- Misc
 -- require("")

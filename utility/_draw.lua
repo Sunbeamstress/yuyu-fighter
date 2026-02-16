@@ -5,6 +5,7 @@ function love.draw()
     draw_stage_bg()
     draw_fighters()
     draw_interface()
+    draw_debug()
 
     love.graphics.setCanvas()
 
