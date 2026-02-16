@@ -14,13 +14,17 @@ game.fighter.two.poise = 0 -- max of 100
 game.fighter.two.resource = 0
 
 
-
-
 function draw_fighters()
     -- we draw the fighters to the screen here!
     if game.fighter.one.attacking then
         love.graphics.draw(game.sprite.testguy.attack, 0, 0)
     else
         love.graphics.draw(game.sprite.testguy.idle, 0, 0)
+    end
+
+    if game.fighter.two.attacking then
+        love.graphics.draw(game.sprite.testguytwo.attack, -1, 0, 0, -1)
+    else
+        love.graphics.draw(game.sprite.testguytwo.idle, -1, 0, 0, -1)
     end
 end
