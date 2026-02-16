@@ -8,6 +8,21 @@ game.window = {
     y_offset = 0,
 }
 
+
+
+game.sprite = {}
+
+
+
+function init_graphics()
+    game.sprite.testguy = {}
+    game.sprite.testguy.attack = love.graphics.newImage("graphics/testguy-attack.png")
+    game.sprite.testguy.hurt = love.graphics.newImage("graphics/testguy-hurt.png")
+    game.sprite.testguy.idle = love.graphics.newImage("graphics/testguy-idle.png")
+end
+
+
+
 function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
     love.window.setMode(
@@ -22,7 +37,7 @@ function love.load()
     -- init_sound()
     -- init_music()
     -- init_shader()
-    -- init_graphics()
+    init_graphics()
 
     game.canvas = love.graphics.newCanvas()
 end
