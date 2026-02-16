@@ -5,12 +5,17 @@ require("utility/library_extensions")
 
 -- Core utilities/LOVE functions
 require("utility/_init")
-require("utility/draw")
-require("utility/update")
-require("utility/control")
+require("utility/_draw")
+require("utility/_update")
+require("utility/_control")
 
 -- Game data
 -- require("")
+
+-- Game utilities
+require("utility/interface")
+require("utility/background")
+require("utility/fighters")
 
 -- Misc
 -- require("")
