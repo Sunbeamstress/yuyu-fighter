@@ -14,6 +14,7 @@ require("utility/shaders")
 require("utility/characters")
 
 -- Game utilities
+require("utility/color")
 require("utility/interface")
 require("utility/background")
 require("utility/fighters")
