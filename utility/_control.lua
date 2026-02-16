@@ -1,61 +1,42 @@
 function love.keypressed(key, code, rep)
     if key:lower() == "q" then
-        love.event.quit()
+        quit_game()
         return
     end
 
     if key:lower() == "r" then
-        love.event.push("quit", "restart")
+        restart_game()
         return
     end
 
     if key:lower() == "z" then
-        if not game.attack_cd then
-            game.fighter.one.state = game.fighterstate_preparing
-        end
+        start_attack("one")
     end
-    
+
     if key:lower() == "x" then
-        if not game.attack_cd then
-            game.fighter.two.state = game.fighterstate_preparing
-        end
+        start_attack("two")
     end
 end
+
+
 
 function love.keyreleased(key, code, rep)
     if key:lower() == "z" then
-        if not game.attack_cd then
-            game.attack_cd = true
-            game.fighter.one.state = game.fighterstate_attacking
-        end
+        end_attack("one")
     end
     
     if key:lower() == "x" then
-        if not game.attack_cd then
-            game.attack_cd = true
-            game.fighter.two.state = game.fighterstate_attacking
-        end
+        end_attack("two")
     end
 end
 
-function love.textinput(t)
-
-end
 
 
+-- function love.mousemoved(x, y, dx, dy)
+-- end
 
-function love.mousemoved(x, y, dx, dy)
+-- function love.mousepressed(x, y, btn)
+-- end
 
-end
-
-
-
-function love.mousepressed(x, y, btn)
-
-end
-
-
-
-function love.mousereleased(x, y, btn)
-
-end
+-- function love.mousereleased(x, y, btn)
+-- end

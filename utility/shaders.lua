@@ -58,3 +58,10 @@ function init_shader()
     local y = game.window.height * game.window.ratio
     local xy = x * y
 end
+
+
+
+function update_shader(dt)
+    game.shader_timer = game.shader_timer + dt
+    game.shader.vertigo_city:send("shader_timer", game.shader_timer)
+end
