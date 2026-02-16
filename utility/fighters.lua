@@ -18,13 +18,12 @@ function draw_fighters()
     -- we draw the fighters to the screen here!
     if game.fighter.one.attacking then
         love.graphics.draw(game.sprite.testguy.attack, 0, 0)
+        love.graphics.draw(game.sprite.testguytwo.hurt, 600, 0, 0, -1, 1)
+    elseif game.fighter.two.attacking then
+        love.graphics.draw(game.sprite.testguytwo.attack, 600, 0, 0, -1, 1)
+        love.graphics.draw(game.sprite.testguy.hurt, 0, 0)
     else
         love.graphics.draw(game.sprite.testguy.idle, 0, 0)
-    end
-
-    if game.fighter.two.attacking then
-        love.graphics.draw(game.sprite.testguytwo.attack, -1, 0, 0, -1)
-    else
-        love.graphics.draw(game.sprite.testguytwo.idle, -1, 0, 0, -1)
+        love.graphics.draw(game.sprite.testguytwo.idle, 600, 0, 0, -1, 1)
     end
 end
