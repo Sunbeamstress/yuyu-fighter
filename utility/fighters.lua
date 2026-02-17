@@ -18,6 +18,10 @@ game.fighter.one = {
     state = game.fighterstate_idle,
     x = 0,
     y = 0,
+    width = 303,
+    height = 317,
+    x_mod = 0,
+    y_mod = 0,
     charging_attack = false,
     released_attack = false,
     attack_cooldown = false,
@@ -34,8 +38,12 @@ game.fighter.two = {
     stars = 0,
     text = "",
     state = game.fighterstate_idle,
-    x = 640,
+    x = game.window.width,
     y = 0,
+    width = 303,
+    height = 317,
+    x_mod = 0,
+    y_mod = 0,
     charging_attack = false,
     released_attack = false,
     attack_cooldown = false,
@@ -142,37 +150,85 @@ end
 
 
 
+function fighter_state(ply, state)
+    if tostring(ply) then
+        if ply == "1" then
+            ply = "one"
+        elseif ply == "2" then
+            ply = "two"
+        end
+    elseif tonumber(ply) then
+        if ply == 1 then
+            ply = "one"
+        elseif ply == 2 then
+            ply = "two"
+        else
+            error("fighter_state(): invalid fighter, %s, passed" % {tostring(ply)})
+        end
+    else
+        error("fighter_state(): invalid fighter type '%s' passed. must be string or number, and only either 1, 2, one, or two." % {type(ply)})
+    end
+
+    state = state:lower()
+
+    local s = game["fighterstate_%s" % state] or -1
+
+    return game.fighter[ply].state == s
+end
+
+
+
 function update_fighters(dt)
     for _, ply in ipairs({"one", "two"}) do
-        local acc = game.fighter[ply].accuracy
-        local cd_time = game.fighter[ply].attack_cooldown_time
+        local fighter = game.fighter[ply]
 
-        -- Has this fighter released an attack and is now cooling down?
-        if game.fighter[ply].attack_cooldown then
-            local new_p = game.fighter[ply].attack_cooldown_progress + dt
+        local acc = fighter.accuracy
+        local cd_time = fighter.attack_cooldown_time
+
+        -- Is the fighter hurt? They should be shaking
+        local x, y = fighter.x, fighter.y
+        local xmod, ymod = 0, 0
+
+        if fighter_state(ply, "hurt") then
+            local dist = 4
+
+            -- Adjust x/ymods
+            local r = math.random(100)
+            if math.random(2) == 2 then r = 0 - r end -- flip it to negative
+            xmod = dist * (r / 100)
+
+            r = math.random(50)
+            if math.random(2) == 2 then r = 0 - r end -- flip it to negative
+            ymod = dist * (r / 100)
+
+            fighter.x_mod = xmod
+            fighter.y_mod = ymod
+        else
+            fighter.x_mod = 0
+            fighter.y_mod = 0
+        end
+
+        if fighter.attack_cooldown then
+            -- 1. Has this fighter released an attack and is now cooling down?
+            local new_p = fighter.attack_cooldown_progress + dt
             if new_p > cd_time then
                 fighter_attack_recover(ply)
             else
-                game.fighter[ply].attack_cooldown_progress = new_p
+                fighter.attack_cooldown_progress = new_p
             end
-
-            return
-        end
-
-        -- Fighter is not on cooldown, entering the state machine.
-        if game.fighter[ply].released_attack then
-            -- 1. This fighter just released an attack!
-            game.fighter[ply].state = game.fighterstate_attacking
+        elseif fighter.released_attack then
+            -- 2. This fighter just released an attack!
+            fighter.state = game.fighterstate_attacking
             fighter_attack_roll(ply, acc)
 
-        elseif game.fighter[ply].charging_attack then
-            -- 2. This fighter is charging an attack, therefore they gain accuracy.
-            game.fighter[ply].state = game.fighterstate_preparing
+        elseif fighter.charging_attack then
+            -- 3. This fighter is charging an attack, therefore they gain accuracy.
+            fighter.state = game.fighterstate_preparing
 
-            local new_acc = game.fighter[ply].speed - dt
+            local new_acc = fighter.speed - dt
             new_acc = new_acc * 0.55 -- slow down the accuracy generation just a little
 
-            game.fighter[ply].accuracy = math.clamp(game.fighter[ply].accuracy + new_acc, 0, 100)
+            fighter.accuracy = math.clamp(fighter.accuracy + new_acc, 0, 100)
         end
     end
 end
@@ -182,6 +238,10 @@ end
 function draw_fighters()
     local x1, y1 = game.fighter.one.x, game.fighter.one.y
     local x2, y2 = game.fighter.two.x, game.fighter.two.y
+    local w1, h1 = game.fighter.one.width, game.fighter.one.height
+    local w2, h2 = game.fighter.two.width, game.fighter.two.height
+    local xmod1, ymod1 = game.fighter.one.x_mod, game.fighter.one.y_mod
+    local xmod2, ymod2 = game.fighter.two.x_mod, game.fighter.two.y_mod
 
     local sprite1 = game.sprite.testguy.idle
     local sprite2 = game.sprite.testguytwo.idle
@@ -195,7 +255,7 @@ function draw_fighters()
         sprite1 = game.sprite.testguy.hurt
     end
 
-    love.graphics.draw(sprite1, x1, y1)
+    love.graphics.draw(sprite1, x1 + xmod1, y1 + ymod1)
 
     -- FIGHTER TWO -------------------------------------------------------------
     if game.fighter.two.state == game.fighterstate_preparing then
@@ -206,5 +266,5 @@ function draw_fighters()
         sprite2 = game.sprite.testguytwo.hurt
     end
 
-    love.graphics.draw(sprite2, x2, y2, 0, -1, 1)
+    love.graphics.draw(sprite2, x2 + xmod2, y2 + ymod2, 0, -1, 1)
 end
