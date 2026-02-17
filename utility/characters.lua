@@ -13,7 +13,8 @@ game.character.testguy.speed = 1.0
 game.character.testguy.victory_lines = {
     "You must defeat Shen Long to stand a chance!",
     "Go home and be a family man!",
-    "aww man bro are u ok i didnt mean to hit u that hard fuck"
+    "aww man bro are u ok i didnt mean to hit u that hard fuck",
+    "I CAN DO ANYTHING"
 }
 
 
@@ -48,13 +49,18 @@ game.character.stintz.max_hp = 100
 game.character.stintz.speed = 1
 game.character.stintz.victory_lines = {
     "Sorry, kid... y'know what they say. Every dog shines on Orion.",
-    "I ain't been in a scrap like that since the Great Cave War of 14800 BC. Nice."
+    "I ain't been in a scrap like that since the Great Cave War of 14800 BC. Nice.",
+    "Back in the Business Tubes of Neo Baghdad, they call that technique the Babylon Paintbrush.",
+    "Ain't nobody showed you the nick-nacks, kid... that's why your canary butt just got glitzed."
 }
 local stintz_names = {
     "Virgo Brainsick",
     "Maxwell Bogus",
     "Hugo Disgusting",
     "Moto Sickness",
+    "Calvin Decline",
+    "Big Government",
+    "Gordon Bennett"
 }
 game.character.stintz.generate_name = function ()
     game.character.stintz.name = stintz_names[math.random(#stintz_names)]
