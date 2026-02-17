@@ -16,6 +16,14 @@ function love.keypressed(key, code, rep)
     if key:lower() == "x" then
         start_attack("two")
     end
+
+    if key:lower() == "a" then
+        stance_swap("one")
+    end
+
+    if key:lower() == "s" then
+        stance_swap("two")
+    end
 end
 
 

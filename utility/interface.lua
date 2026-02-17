@@ -35,6 +35,9 @@ ui.left = {
         end,
         state = function ()
             return game.fighter.one.state
+        end,
+        stance = function ()
+            return game.fighter.one.stance
         end
     },
     stars = {
@@ -91,6 +94,9 @@ ui.right = {
         end,
         state = function ()
             return game.fighter.two.state
+        end,
+        stance = function ()
+            return game.fighter.two.stance
         end
     },
     stars = {
@@ -181,6 +187,7 @@ function draw_interface()
         w = d_tbl.power.w
         h = d_tbl.power.h
         v = d_tbl.power.value()
+        cs = d_tbl.power.stance()
 
         -- Background
         draw_rect({0, 0, 0}, x, y, w, h)
@@ -192,7 +199,7 @@ function draw_interface()
         w = adj
         -- Foreground
         --local current_bar_color
-        if d_tbl.power.state() == game.fighterstate_preparing then 
+        if d_tbl.power.state() == game.fighter_state_preparing then 
             --current_bar_color = d_tbl.power.color_active
             draw_rect(d_tbl.power.color_active, x, y, w, h)
         else
@@ -207,7 +214,8 @@ function draw_interface()
         str = d_tbl.text.value()
 
         echo_small(str, {0.9, 0.8, 0.7}, x, y + 12)
-        echo("%s player Power: %d%%" % {dir:title(), v}, {0.9, 0.8, 0.7}, x, y + 32)
+        echo("Power: %d%%" % {v}, {0.9, 0.8, 0.7}, x, y + 32)
+        echo("Stance: %d" % {cs}, {0.9, 0.8, 0.7}, x, y + 42)
 
         -- BOTTOM PANEL: Star Meter
         x = d_tbl.stars.x

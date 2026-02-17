@@ -1,7 +1,11 @@
-game.fighterstate_idle = 0
-game.fighterstate_preparing = 1
-game.fighterstate_attacking = 2
-game.fighterstate_hurt = 3
+game.fighter_state_idle = 0
+game.fighter_state_preparing = 1
+game.fighter_state_attacking = 2
+game.fighter_state_hurt = 3
+
+game.fighter_stance_neutral = 0
+game.fighter_stance_defensive = 1
+game.fighter_stance_evasive = 2
 
 game.fighter = {}
 
@@ -14,7 +18,9 @@ game.fighter.one = {
     resource = 0,
     stars = 0,
     text = "",
-    state = game.fighterstate_idle,
+    text_timer = 0,
+    state = game.fighter_state_idle,
+    stance = game.fighter_stance_neutral,
 
     -- Physical/graphical properties
     x = 0,                     -- fighter's base location on the x-axis. this never changes!
@@ -55,7 +61,7 @@ game.fighter.two.x_drift_dir = -1
 
 function fighter_can_attack(ply)
     return not game.fighter[ply].attack_cooldown
-    and (game.fighter[ply].state ~= game.fighterstate_hurt and game.fighter[ply].state ~= game.fighterstate_attacking)
+    and (game.fighter[ply].state ~= game.fighter_state_hurt and game.fighter[ply].state ~= game.fighter_state_attacking)
 end
 
 
@@ -66,12 +72,11 @@ end
 
 
 
-function fighter_attack_cooldown(ply, time)
+function fighter_attack_cooldown(ply, time, power_redux)
     -- Governs how long a fighter is stalled after releasing an attack.
     game.fighter[ply].attack_cooldown = true
     game.fighter[ply].attack_cooldown_progress = 0
     game.fighter[ply].attack_cooldown_time = time
-    game.fighter[ply].power = 0
 end
 
 
@@ -82,7 +87,7 @@ function fighter_attack_recover(ply)
     game.fighter[ply].attack_cooldown_progress = 0
     game.fighter[ply].attack_cooldown_time = 0
 
-    game.fighter[ply].state = game.fighterstate_idle
+    game.fighter[ply].state = game.fighter_state_idle
 
     game.fighter[ply].text = ""
 end
@@ -92,33 +97,48 @@ end
 function fighter_attack_connected(ply)
     -- Assume p2 is the default target
     local tar = (ply == "two" and "one") or "two"
-
-    game.fighter[ply].text = "Hit!"
+    local sound_to_play = game.sound.blow
 
     -- Calculate some damage. We'll let the attacks hit harder if they had more
     -- stars when they released.
+
     local dmg_base = 8 + (24 * (game.fighter[ply].stars / 100))
     local dmg = math.random(dmg_base, dmg_base + 5)
 
+    if game.fighter[tar].stance == game.fighter_stance_defensive then
+        love.audio.play(game.sound.blow_blocked)
+        game.fighter[ply].text = "Hit."
+        game.fighter[tar].text = "Blocked!"
+        dmg = math.floor(dmg / 2)
+    else
+        love.audio.play(game.sound.blow)
+        game.fighter[ply].text = "Hit!"
+    end
+
     fighter_attack_received(tar, dmg)
     game.fighter[ply].text = "%s Dealt %d damage." % {game.fighter[ply].text, dmg}
-    fighter_attack_cooldown(ply, 0.5)
+    fighter_attack_cooldown(ply, 0.5, 100)
 
     absorb_lucky_stars(ply)
-
-    love.audio.play(game.sound.blow)
 end
 
 
 
 function fighter_attack_received(ply, dmg)
-    game.fighter[ply].state = game.fighterstate_hurt
+    game.fighter[ply].state = game.fighter_state_hurt
 
     local new_h = game.fighter[ply].health - dmg
     if new_h < 0 then
         fighter_defeated(ply)
     end
     game.fighter[ply].health = math.clamp(new_h, 0, 100)
+
+    local power_redux = 100
+    if game.fighter[ply].stance == game.fighter_stance_defensive then
+        fighter_power_reduction_flat(game.fighter[ply], 2) --reduce slightly
+    else
+        fighter_power_reduction_perc(game.fighter[ply], 0) --wipe em out
+    end
 
     fighter_attack_cooldown(ply, 0.35)
 end
@@ -127,7 +147,7 @@ end
 
 function fighter_attack_missed(ply)
     game.fighter[ply].text = "Missed."
-    fighter_attack_cooldown(ply, 0.8)
+    fighter_attack_cooldown(ply, 0.8, 100)
 
     love.audio.play(game.sound.miss)
 end
@@ -136,6 +156,7 @@ end
 
 function fighter_attack_roll(ply, acc)
     game.fighter[ply].released_attack = false
+    fighter_power_reduction_flat(game.fighter[ply], 100)
 
     -- Roll the dice based on their power.
     local r = math.random(100)
@@ -178,14 +199,26 @@ end
 
 function fighter_power_generation(fighter, dt)
     local new_pow = fighter.speed - dt
-    if fighter.state == game.fighterstate_hurt or fighter.attack_cooldown then
+    local new_mult = 0.15 -- passive rate
+    if fighter.state == game.fighter_state_hurt or fighter.attack_cooldown then
         new_pow = 0 -- halt generation entirely
     elseif fighter.charging_attack then
-        new_pow = new_pow * 0.55 -- full speed if we're charging up
+        new_mult = 0.55 -- full speed if we're charging up
     else
-        new_pow = new_pow * 0.15 -- slow if we're idling
+        if fighter.stance == game.fighter_stance_defensive then
+            new_mult = 0.05 -- slow if we're blocking
+        end
+    new_pow = new_pow * new_mult -- 0.15 by default
     end
     fighter.power = math.clamp(fighter.power + new_pow, 0, 100)
+end
+
+function fighter_power_reduction_flat(fighter, reduction)
+    fighter.power = math.clamp(fighter.power - reduction, 0, 100)
+end
+
+function fighter_power_reduction_perc(fighter, reduction)
+    fighter.power = math.clamp(fighter.power * reduction, 0, 100)
 end
 
 function update_fighters(dt)
@@ -200,7 +233,8 @@ function update_fighters(dt)
         local x, y = fighter.x, fighter.y
         local xmod, ymod = 0, 0
 
-        if fighter_state(ply, "hurt") then
+        --if fighter_state(ply, "hurt") then
+        if fighter.state == game.fighter_state_hurt then
             local dist = 4
 
             -- Adjust x/ymods
@@ -229,19 +263,17 @@ function update_fighters(dt)
             end
         elseif fighter.released_attack then
             -- 2. This fighter just released an attack!
-            fighter.state = game.fighterstate_attacking
+            fighter.state = game.fighter_state_attacking
             fighter_attack_roll(ply, acc)
 
         elseif fighter.charging_attack then
-            -- 3. This fighter is charging an attack, therefore they gain power faster.
-            fighter.state = game.fighterstate_preparing
-
-            --local new_acc = fighter.speed - dt
-            --new_acc = new_acc * 0.55 -- slow down the power generation just a little
-
-            --fighter.power = math.clamp(fighter.power + new_acc, 0, 100)
+            fighter.state = game.fighter_state_preparing
         else
             drifting = true
+            fighter.text_timer = fighter.text_timer - 1
+            if fighter.text_timer < 1 then
+                fighter.text = ""
+            end
         end
         fighter_power_generation(fighter, dt)
 
@@ -266,23 +298,39 @@ function draw_fighters()
     local sprite2 = game.sprite.testguytwo.idle
 
     -- FIGHTER ONE -------------------------------------------------------------
-    if game.fighter.one.state == game.fighterstate_preparing then
+    if game.fighter.one.stance == game.fighter_stance_defensive then
+        sprite1 = game.sprite.testguy.block
+    end
+
+    if game.fighter.one.state == game.fighter_state_preparing then
         sprite1 = game.sprite.testguy.prepare
-    elseif game.fighter.one.state == game.fighterstate_attacking then
+    elseif game.fighter.one.state == game.fighter_state_attacking then
         sprite1 = game.sprite.testguy.attack
-    elseif game.fighter.one.state == game.fighterstate_hurt then
-        sprite1 = game.sprite.testguy.hurt
+    elseif game.fighter.one.state == game.fighter_state_hurt then
+        if game.fighter.one.stance == game.fighter_stance_defensive then
+            sprite1 = game.sprite.testguy.block
+        else
+            sprite1 = game.sprite.testguy.hurt
+        end
     end
 
     love.graphics.draw(sprite1, x1 + xmod1 + xdrift1, y1 + ymod1 + ydrift1)
 
     -- FIGHTER TWO -------------------------------------------------------------
-    if game.fighter.two.state == game.fighterstate_preparing then
+    if game.fighter.two.stance == game.fighter_stance_defensive then
+        sprite2 = game.sprite.testguytwo.block
+    end
+
+    if game.fighter.two.state == game.fighter_state_preparing then
         sprite2 = game.sprite.testguytwo.prepare
-    elseif game.fighter.two.state == game.fighterstate_attacking then
+    elseif game.fighter.two.state == game.fighter_state_attacking then
         sprite2 = game.sprite.testguytwo.attack
-    elseif game.fighter.two.state == game.fighterstate_hurt then
-        sprite2 = game.sprite.testguytwo.hurt
+    elseif game.fighter.two.state == game.fighter_state_hurt then
+        if game.fighter.two.stance == game.fighter_stance_defensive then
+            sprite2 = game.sprite.testguytwo.block
+        else
+            sprite2 = game.sprite.testguytwo.hurt
+        end
     end
 
     love.graphics.draw(sprite2, x2 + xmod2 + xdrift2, y2 + ymod2 + ydrift2, 0, -1, 1)
