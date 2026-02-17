@@ -8,7 +8,7 @@ game.fighter = {}
 game.fighter.one = {
     -- States and current fighter state
     health = 100,
-    accuracy = 0,
+    power = 0,
     speed = 1.0,
     poise = 0,
     resource = 0,
@@ -71,7 +71,7 @@ function fighter_attack_cooldown(ply, time)
     game.fighter[ply].attack_cooldown = true
     game.fighter[ply].attack_cooldown_progress = 0
     game.fighter[ply].attack_cooldown_time = time
-    game.fighter[ply].accuracy = 0
+    game.fighter[ply].power = 0
 end
 
 
@@ -137,7 +137,7 @@ end
 function fighter_attack_roll(ply, acc)
     game.fighter[ply].released_attack = false
 
-    -- Roll the dice based on their accuracy.
+    -- Roll the dice based on their power.
     local r = math.random(100)
     if r < acc then
         -- Attack hit.
@@ -176,13 +176,23 @@ function fighter_state(ply, state)
     return game.fighter[ply].state == s
 end
 
-
+function fighter_power_generation(fighter, dt)
+    local new_pow = fighter.speed - dt
+    if fighter.state == game.fighterstate_hurt or fighter.attack_cooldown then
+        new_pow = 0 -- halt generation entirely
+    elseif fighter.charging_attack then
+        new_pow = new_pow * 0.55 -- full speed if we're charging up
+    else
+        new_pow = new_pow * 0.15 -- slow if we're idling
+    end
+    fighter.power = math.clamp(fighter.power + new_pow, 0, 100)
+end
 
 function update_fighters(dt)
     for _, ply in ipairs({"one", "two"}) do
         local fighter = game.fighter[ply]
 
-        local acc = fighter.accuracy
+        local acc = fighter.power
         local cd_time = fighter.attack_cooldown_time
         local drifting = false
 
@@ -223,17 +233,17 @@ function update_fighters(dt)
             fighter_attack_roll(ply, acc)
 
         elseif fighter.charging_attack then
-            -- 3. This fighter is charging an attack, therefore they gain accuracy.
+            -- 3. This fighter is charging an attack, therefore they gain power faster.
             fighter.state = game.fighterstate_preparing
 
-            local new_acc = fighter.speed - dt
-            new_acc = new_acc * 0.55 -- slow down the accuracy generation just a little
+            --local new_acc = fighter.speed - dt
+            --new_acc = new_acc * 0.55 -- slow down the power generation just a little
 
-            fighter.accuracy = math.clamp(fighter.accuracy + new_acc, 0, 100)
-
+            --fighter.power = math.clamp(fighter.power + new_acc, 0, 100)
         else
             drifting = true
         end
+        fighter_power_generation(fighter, dt)
 
         if drifting then
         end

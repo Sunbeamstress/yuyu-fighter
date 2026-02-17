@@ -23,14 +23,18 @@ ui.left = {
         text_x = 214,
         text_y = 6,
     },
-    accuracy = {
+    power = {
         x = 8,
         y = game.window.height - 50,
         w = 200,
         h = 10,
-        color = {0.5, 0.5, 0.7},
+        color_idle = {0.5, 0.5, 0.7},
+        color_active = {0.7, 0.7, 0.9},
         value = function ()
-            return 100 * (game.fighter.one.accuracy / 100)
+            return 100 * (game.fighter.one.power / 100)
+        end,
+        state = function ()
+            return game.fighter.one.state
         end
     },
     stars = {
@@ -74,14 +78,19 @@ ui.right = {
         text_x = game.window.width - 266,
         text_y = 6,
     },
-    accuracy = {
+    power = {
         x = game.window.width - 208,
         y = game.window.height - 50,
         w = 200,
         h = 10,
-        color = {0.5, 0.5, 0.7},
+        --color = {0.5, 0.5, 0.7},
+        color_idle = {0.5, 0.5, 0.7},
+        color_active = {0.7, 0.7, 0.9},
         value = function ()
-            return 100 * (game.fighter.two.accuracy / 100)
+            return 100 * (game.fighter.two.power / 100)
+        end,
+        state = function ()
+            return game.fighter.two.state
         end
     },
     stars = {
@@ -157,7 +166,7 @@ function draw_interface()
     -- BOTTOM PANEL: Background
     draw_rect(panel_color, 0, game.window.height - 60, game.window.width, 60)
 
-    -- BOTTOM PANEL: Accuracy Bars
+    -- BOTTOM PANEL: Power Bars
     x = 8
     y = game.window.height - 50
     w = 200
@@ -166,12 +175,12 @@ function draw_interface()
     for _, dir in ipairs({"left", "right"}) do
         local d_tbl = ui[dir]
 
-        -- BOTTOM PANEL: Accuracy Bars
-        x = d_tbl.accuracy.x
-        y = d_tbl.accuracy.y
-        w = d_tbl.accuracy.w
-        h = d_tbl.accuracy.h
-        v = d_tbl.accuracy.value()
+        -- BOTTOM PANEL: Power Bars
+        x = d_tbl.power.x
+        y = d_tbl.power.y
+        w = d_tbl.power.w
+        h = d_tbl.power.h
+        v = d_tbl.power.value()
 
         -- Background
         draw_rect({0, 0, 0}, x, y, w, h)
@@ -182,7 +191,15 @@ function draw_interface()
         end
         w = adj
         -- Foreground
-        draw_rect(d_tbl.accuracy.color, x, y, w, h)
+        --local current_bar_color
+        if d_tbl.power.state() == game.fighterstate_preparing then 
+            --current_bar_color = d_tbl.power.color_active
+            draw_rect(d_tbl.power.color_active, x, y, w, h)
+        else
+            --current_bar_color = d_tbl.power.color_idle
+            draw_rect(d_tbl.power.color_idle, x, y, w, h)
+        end
+        --draw_rect(current_bar_color, x, y, w, h)
 
         -- text indicators
         x = d_tbl.text.x
@@ -190,7 +207,7 @@ function draw_interface()
         str = d_tbl.text.value()
 
         echo_small(str, {0.9, 0.8, 0.7}, x, y + 12)
-        echo("%s player Accuracy: %d%%" % {dir:title(), v}, {0.9, 0.8, 0.7}, x, y + 32)
+        echo("%s player Power: %d%%" % {dir:title(), v}, {0.9, 0.8, 0.7}, x, y + 32)
 
         -- BOTTOM PANEL: Star Meter
         x = d_tbl.stars.x

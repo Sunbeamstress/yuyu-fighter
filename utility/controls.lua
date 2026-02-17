@@ -21,7 +21,7 @@ end
 function end_attack(ply)
     game.fighter[ply].charging_attack = false
 
-    if game.fighter[ply].accuracy > 0 then
+    if game.fighter[ply].power > 0 then
         game.fighter[ply].released_attack = true
     end
 end
