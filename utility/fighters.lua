@@ -8,6 +8,7 @@ game.fighter = {}
 
 
 game.fighter.one = {
+    -- States and current fighter state
     health = 100,
     accuracy = 0,
     speed = 1.0,
@@ -16,12 +17,26 @@ game.fighter.one = {
     stars = 0,
     text = "",
     state = game.fighterstate_idle,
-    x = 0,
-    y = 0,
-    width = 303,
-    height = 317,
-    x_mod = 0,
-    y_mod = 0,
+
+    -- Physical/graphical properties
+    x = 0,                     -- fighter's base location on the x-axis. this never changes!
+    y = 0,                     -- fighter's base location on the y-axis. this never changes!
+    width = 303,               -- width of the fighter's sprite in px.
+    height = 317,              -- height of the fighter's sprite in px.
+    x_mod = 0,                 -- used by hurt states, impacts, etc. to determine shake value for the sprite
+    y_mod = 0,                 -- used by hurt states, impacts, etc. to determine shake value for the sprite
+    x_drift = 0,               -- how far the sprite has "wandered" in pixels on the x-axis
+    y_drift = 0,               -- how far the sprite has "wandered" in pixels on the y-axis
+    x_drift_dir = 1,           -- 1 for right, -1 for left
+    y_drift_dir = 0,           -- 1 for up, -1 for down
+    drift_rate = 1,            -- how often does this character shift direction when drifting?
+                               -- lower is faster, more frequent shifts
+    stepping = false,          -- whether the fighter is taking a 'step'
+    last_step = 0,
+    last_dir_change = 0,
+    wander_back = false,
+
+    -- Attack tracking
     charging_attack = false,
     released_attack = false,
     attack_cooldown = false,
@@ -29,27 +44,14 @@ game.fighter.one = {
     attack_cooldown_time = 0,
 }
 
-game.fighter.two = {
-    health = 90,
-    accuracy = 0,
-    speed = 1.2,
-    poise = 0,
-    resource = 0,
-    stars = 0,
-    text = "",
-    state = game.fighterstate_idle,
-    x = game.window.width,
-    y = 0,
-    width = 303,
-    height = 317,
-    x_mod = 0,
-    y_mod = 0,
-    charging_attack = false,
-    released_attack = false,
-    attack_cooldown = false,
-    attack_cooldown_progress = 0,
-    attack_cooldown_time = 0,
-}
+
+
+game.fighter.two = table.deepcopy(game.fighter.one)
+game.fighter.two.health = 90
+game.fighter.two.speed = 1.2
+game.fighter.two.x = game.window.width
+game.fighter.two.drift_rate = 0.8
+game.fighter.two.x_drift_dir = -1
 
 
 
@@ -184,6 +186,7 @@ function update_fighters(dt)
 
         local acc = fighter.accuracy
         local cd_time = fighter.attack_cooldown_time
+        local drifting = false
 
         -- Is the fighter hurt? They should be shaking
         local x, y = fighter.x, fighter.y
@@ -229,6 +232,12 @@ function update_fighters(dt)
             new_acc = new_acc * 0.55 -- slow down the accuracy generation just a little
 
             fighter.accuracy = math.clamp(fighter.accuracy + new_acc, 0, 100)
+
+        else
+            drifting = true
+        end
+
+        if drifting then
         end
     end
 end
@@ -242,6 +251,8 @@ function draw_fighters()
     local w2, h2 = game.fighter.two.width, game.fighter.two.height
     local xmod1, ymod1 = game.fighter.one.x_mod, game.fighter.one.y_mod
     local xmod2, ymod2 = game.fighter.two.x_mod, game.fighter.two.y_mod
+    local xdrift1, ydrift1 = game.fighter.one.x_drift, game.fighter.one.y_drift
+    local xdrift2, ydrift2 = game.fighter.two.x_drift, game.fighter.two.y_drift
 
     local sprite1 = game.sprite.testguy.idle
     local sprite2 = game.sprite.testguytwo.idle
@@ -255,7 +266,7 @@ function draw_fighters()
         sprite1 = game.sprite.testguy.hurt
     end
 
-    love.graphics.draw(sprite1, x1 + xmod1, y1 + ymod1)
+    love.graphics.draw(sprite1, x1 + xmod1 + xdrift1, y1 + ymod1 + ydrift1)
 
     -- FIGHTER TWO -------------------------------------------------------------
     if game.fighter.two.state == game.fighterstate_preparing then
@@ -266,5 +277,5 @@ function draw_fighters()
         sprite2 = game.sprite.testguytwo.hurt
     end
 
-    love.graphics.draw(sprite2, x2 + xmod2, y2 + ymod2, 0, -1, 1)
+    love.graphics.draw(sprite2, x2 + xmod2 + xdrift2, y2 + ymod2 + ydrift2, 0, -1, 1)
 end
