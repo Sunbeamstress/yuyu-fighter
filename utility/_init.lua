@@ -34,6 +34,17 @@ end
 
 
 
+game.music = {}
+
+function init_music()
+    -- All music length is expressed in seconds!
+    game.music.birdcage_bounce = {}
+    game.music.birdcage_bounce.source = love.audio.newSource("music/birdcage bounce.ogg", "stream")
+    game.music.birdcage_bounce.length = 96
+end
+
+
+
 game.sprite = {}
 
 function init_graphics()
@@ -70,9 +81,15 @@ function love.load()
 
     init_fonts()
     init_sound()
-    -- init_music()
+    init_music()
     init_shader()
     init_graphics()
 
     game.canvas = love.graphics.newCanvas()
+
+    test_load_in() -- placeholder function to call stuff we want to have happen
+                   -- as soon as the game begins. this can be more sophisticated
+                   -- later
+                   --
+                   -- lives in utilities/debug.lua
 end

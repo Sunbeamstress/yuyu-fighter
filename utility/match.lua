@@ -49,17 +49,18 @@ end
 
 
 function update_stars(dt)
+    -- The timer begins before we generate stars.
     last_star = last_star or 0
     next_star = next_star or game.match.star_delay
 
+    -- If it's been long enough since our last star, we can release some.
     if last_star > next_star then
-        -- Every 3 seconds, we release a star
         release_lucky_stars(game.match.star_release)
+        -- Set the expected time until our next star.
         next_star = last_star + game.match.star_rate
     end
 
-
-    
+    -- Iterate through each star in our field and give it a little wiggle.
     for n, s_tbl in ipairs(ui.stars) do
         -- Should range vaguely from -1.0 to +1.0
         local speed = math.random(100) / 100
@@ -70,5 +71,6 @@ function update_stars(dt)
         ui.stars[n].y = math.clamp(s_tbl.y + wiggle2, 0, game.match.star_range)
     end
 
+    -- Store the time that has passed since the last frame update.
     last_star = last_star + dt
 end

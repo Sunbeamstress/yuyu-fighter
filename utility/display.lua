@@ -1,3 +1,17 @@
+-- echo(): Shortcut function for printing text to the screen.
+-- A variant of love.graphics.printf() meant to assume as many arguments as
+-- possible.
+--
+-- str: the string you wish to print to the screen.
+-- col: table {r, g, b[, a]} representing the color of the string.
+--      color ranges from 0.0 to 1.0
+-- x, y: the position on screen, in pixels, where you will draw this text
+-- wrap_to: how far the string is allowed to display before it wraps around
+--          to the other side. by default, will be permitted to wrap all the
+--          way to the window's edge.
+-- align: left, center, right, or justified. do we have justified? does that
+--        actually work? idk
+-- font: only two choices for now: main, or small.
 function echo(str, col, x, y, wrap_to, align, font)
     col = col or {0.8, 0.8, 0.8}
 
@@ -15,12 +29,21 @@ end
 
 
 
+-- echo_small(): a shortcut for echoing small text. otherwise works identically
+-- to echo().
 function echo_small(str, col, x, y, wrap, align)
     echo(str, col, x, y, wrap, align, "small")
 end
 
 
 
+-- draw_rect(): shorthand to draw LOVE 2D boxes to the screen.
+--
+-- col: table {r, g, b[, a]} representing the color of the rectangle.
+--      color ranges from 0.0 to 1.0
+-- x, y: the position in pixels of where this rectangle begins on the screen.
+--       its origin point is always its upper left corner!
+-- w, h: the rectangle's width and height
 function draw_rect(col, x, y, w, h)
     col = col or {0.8, 0.8, 0.8}
 
@@ -36,6 +59,10 @@ end
 
 
 
+-- draw_border(): just like draw_rect() above, but this one draws an unfilled
+-- rectangle of varying thickness.
+--
+-- thickness: must be an integer. the thickness of the border, in pixels.
 function draw_border(col, thickness, x, y, w, h)
     col = col or {0.8, 0.8, 0.8}
 
@@ -54,6 +81,7 @@ end
 
 
 
+-- draw_circ(): like draw_rect() and draw_border() above, but for circles!
 function draw_circ(col, x, y, w, h)
     col = col or {0.8, 0.8, 0.8}
 

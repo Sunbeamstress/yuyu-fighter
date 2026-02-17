@@ -1,5 +1,4 @@
-game.background = {
-}
+game.background = {}
 
 function draw_stage_bg()
     local bgsprite = game.sprite.background

@@ -22,5 +22,6 @@ require("utility/fighters")
 require("utility/debug")
 require("utility/controls")
 require("utility/match")
+require("utility/music")
 
 --------------------------------------------------------------------------------

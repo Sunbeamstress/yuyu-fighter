@@ -1,3 +1,14 @@
+-- $$$$$$$$\        $$\       $$\                  $$$$$$\    $$\                                     $$\                                   
+-- \__$$  __|       $$ |      $$ |                $$  __$$\   $$ |                                    $$ |                                  
+--    $$ | $$$$$$\  $$$$$$$\  $$ | $$$$$$\        $$ /  \__|$$$$$$\    $$$$$$\  $$\   $$\  $$$$$$$\ $$$$$$\   $$\   $$\  $$$$$$\   $$$$$$\  
+--    $$ | \____$$\ $$  __$$\ $$ |$$  __$$\       \$$$$$$\  \_$$  _|  $$  __$$\ $$ |  $$ |$$  _____|\_$$  _|  $$ |  $$ |$$  __$$\ $$  __$$\ 
+--    $$ | $$$$$$$ |$$ |  $$ |$$ |$$$$$$$$ |       \____$$\   $$ |    $$ |  \__|$$ |  $$ |$$ /        $$ |    $$ |  $$ |$$ |  \__|$$$$$$$$ |
+--    $$ |$$  __$$ |$$ |  $$ |$$ |$$   ____|      $$\   $$ |  $$ |$$\ $$ |      $$ |  $$ |$$ |        $$ |$$\ $$ |  $$ |$$ |      $$   ____|
+--    $$ |\$$$$$$$ |$$$$$$$  |$$ |\$$$$$$$\       \$$$$$$  |  \$$$$  |$$ |      \$$$$$$  |\$$$$$$$\   \$$$$  |\$$$$$$  |$$ |      \$$$$$$$\ 
+--    \__| \_______|\_______/ \__| \_______|       \______/    \____/ \__|       \______/  \_______|   \____/  \______/ \__|       \_______|
+
+
+
 game.fighter_state_idle = 0
 game.fighter_state_preparing = 1
 game.fighter_state_attacking = 2
@@ -59,6 +70,19 @@ game.fighter.two.x_drift_dir = -1
 
 
 
+--  $$$$$$\    $$\                $$\                     $$$$$$$$\                              $$\     $$\                               
+-- $$  __$$\   $$ |               $$ |                    $$  _____|                             $$ |    \__|                              
+-- $$ /  \__|$$$$$$\    $$$$$$\ $$$$$$\    $$$$$$\        $$ |   $$\   $$\ $$$$$$$\   $$$$$$$\ $$$$$$\   $$\  $$$$$$\  $$$$$$$\   $$$$$$$\ 
+-- \$$$$$$\  \_$$  _|   \____$$\\_$$  _|  $$  __$$\       $$$$$\ $$ |  $$ |$$  __$$\ $$  _____|\_$$  _|  $$ |$$  __$$\ $$  __$$\ $$  _____|
+--  \____$$\   $$ |     $$$$$$$ | $$ |    $$$$$$$$ |      $$  __|$$ |  $$ |$$ |  $$ |$$ /        $$ |    $$ |$$ /  $$ |$$ |  $$ |\$$$$$$\  
+-- $$\   $$ |  $$ |$$\ $$  __$$ | $$ |$$\ $$   ____|      $$ |   $$ |  $$ |$$ |  $$ |$$ |        $$ |$$\ $$ |$$ |  $$ |$$ |  $$ | \____$$\ 
+-- \$$$$$$  |  \$$$$  |\$$$$$$$ | \$$$$  |\$$$$$$$\       $$ |   \$$$$$$  |$$ |  $$ |\$$$$$$$\   \$$$$  |$$ |\$$$$$$  |$$ |  $$ |$$$$$$$  |
+--  \______/    \____/  \_______|  \____/  \_______|      \__|    \______/ \__|  \__| \_______|   \____/ \__| \______/ \__|  \__|\_______/ 
+
+-- State functions are functions owned by the State. All power to the Motherland.
+
+
+
 function fighter_can_attack(ply)
     return not game.fighter[ply].attack_cooldown
     and (game.fighter[ply].state ~= game.fighter_state_hurt and game.fighter[ply].state ~= game.fighter_state_attacking)
@@ -94,6 +118,71 @@ end
 
 
 
+function fighter_state(ply, state)
+    if tostring(ply) then
+        if ply == "1" then
+            ply = "one"
+        elseif ply == "2" then
+            ply = "two"
+        end
+    elseif tonumber(ply) then
+        if ply == 1 then
+            ply = "one"
+        elseif ply == 2 then
+            ply = "two"
+        else
+            error("fighter_state(): invalid fighter, %s, passed" % {tostring(ply)})
+        end
+    else
+        error("fighter_state(): invalid fighter type '%s' passed. must be string or number, and only either 1, 2, one, or two." % {type(ply)})
+    end
+
+    local state = state:lower()
+    local s = game["fighterstate_%s" % state] or -1
+
+    return game.fighter[ply].state == s
+end
+
+
+
+function fighter_stance(ply, stance)
+    if tostring(ply) then
+        if ply == "1" then
+            ply = "one"
+        elseif ply == "2" then
+            ply = "two"
+        end
+    elseif tonumber(ply) then
+        if ply == 1 then
+            ply = "one"
+        elseif ply == 2 then
+            ply = "two"
+        else
+            error("fighter_stance(): invalid fighter, %s, passed" % {tostring(ply)})
+        end
+    else
+        error("fighter_stance(): invalid fighter type '%s' passed. must be string or number, and only either 1, 2, one, or two." % {type(ply)})
+    end
+
+    local stance = stance:lower()
+    local s = game["fighter_stance_%s" % stance] or -1
+
+    return game.fighter[ply].stance == s
+end
+
+
+
+-- $$$$$$$$\                             $$\               
+-- $$  _____|                            $$ |              
+-- $$ |  $$\    $$\  $$$$$$\  $$$$$$$\ $$$$$$\    $$$$$$$\ 
+-- $$$$$\\$$\  $$  |$$  __$$\ $$  __$$\\_$$  _|  $$  _____|
+-- $$  __|\$$\$$  / $$$$$$$$ |$$ |  $$ | $$ |    \$$$$$$\  
+-- $$ |    \$$$  /  $$   ____|$$ |  $$ | $$ |$$\  \____$$\ 
+-- $$$$$$$$\\$  /   \$$$$$$$\ $$ |  $$ | \$$$$  |$$$$$$$  |
+-- \________|\_/     \_______|\__|  \__|  \____/ \_______/ 
+
+
+
 function fighter_attack_connected(ply)
     -- Assume p2 is the default target
     local tar = (ply == "two" and "one") or "two"
@@ -105,7 +194,7 @@ function fighter_attack_connected(ply)
     local dmg_base = 8 + (24 * (game.fighter[ply].stars / 100))
     local dmg = math.random(dmg_base, dmg_base + 5)
 
-    if game.fighter[tar].stance == game.fighter_stance_defensive then
+    if fighter_stance(tar, "defensive") then
         love.audio.play(game.sound.blow_blocked)
         game.fighter[ply].text = "Hit."
         game.fighter[tar].text = "Blocked!"
@@ -134,7 +223,8 @@ function fighter_attack_received(ply, dmg)
     game.fighter[ply].health = math.clamp(new_h, 0, 100)
 
     local power_redux = 100
-    if game.fighter[ply].stance == game.fighter_stance_defensive then
+
+    if fighter_stance(ply, "defensive") then
         fighter_power_reduction_flat(game.fighter[ply], 2) --reduce slightly
     else
         fighter_power_reduction_perc(game.fighter[ply], 0) --wipe em out
@@ -171,45 +261,24 @@ end
 
 
 
-function fighter_state(ply, state)
-    if tostring(ply) then
-        if ply == "1" then
-            ply = "one"
-        elseif ply == "2" then
-            ply = "two"
-        end
-    elseif tonumber(ply) then
-        if ply == 1 then
-            ply = "one"
-        elseif ply == 2 then
-            ply = "two"
-        else
-            error("fighter_state(): invalid fighter, %s, passed" % {tostring(ply)})
-        end
-    else
-        error("fighter_state(): invalid fighter type '%s' passed. must be string or number, and only either 1, 2, one, or two." % {type(ply)})
-    end
 
-    state = state:lower()
-
-    local s = game["fighterstate_%s" % state] or -1
-
-    return game.fighter[ply].state == s
-end
-
-function fighter_power_generation(fighter, dt)
+function fighter_power_generation(ply, dt)
+    local fighter = game.fighter[ply]
     local new_pow = fighter.speed - dt
     local new_mult = 0.15 -- passive rate
-    if fighter.state == game.fighter_state_hurt or fighter.attack_cooldown then
+
+    if fighter_state(ply, "hurt") or fighter.attack_cooldown then
         new_pow = 0 -- halt generation entirely
     elseif fighter.charging_attack then
         new_mult = 0.55 -- full speed if we're charging up
     else
-        if fighter.stance == game.fighter_stance_defensive then
+        if fighter_stance(ply, "defensive") then
             new_mult = 0.05 -- slow if we're blocking
         end
-    new_pow = new_pow * new_mult -- 0.15 by default
+
+        new_pow = new_pow * new_mult -- 0.15 by default
     end
+
     fighter.power = math.clamp(fighter.power + new_pow, 0, 100)
 end
 
@@ -220,6 +289,19 @@ end
 function fighter_power_reduction_perc(fighter, reduction)
     fighter.power = math.clamp(fighter.power * reduction, 0, 100)
 end
+
+
+
+--  $$$$$$\                                      $$$$$$$$\                              $$\     $$\                               
+-- $$  __$$\                                     $$  _____|                             $$ |    \__|                              
+-- $$ /  \__| $$$$$$\   $$$$$$\   $$$$$$\        $$ |   $$\   $$\ $$$$$$$\   $$$$$$$\ $$$$$$\   $$\  $$$$$$\  $$$$$$$\   $$$$$$$\ 
+-- $$ |      $$  __$$\ $$  __$$\ $$  __$$\       $$$$$\ $$ |  $$ |$$  __$$\ $$  _____|\_$$  _|  $$ |$$  __$$\ $$  __$$\ $$  _____|
+-- $$ |      $$ /  $$ |$$ |  \__|$$$$$$$$ |      $$  __|$$ |  $$ |$$ |  $$ |$$ /        $$ |    $$ |$$ /  $$ |$$ |  $$ |\$$$$$$\  
+-- $$ |  $$\ $$ |  $$ |$$ |      $$   ____|      $$ |   $$ |  $$ |$$ |  $$ |$$ |        $$ |$$\ $$ |$$ |  $$ |$$ |  $$ | \____$$\ 
+-- \$$$$$$  |\$$$$$$  |$$ |      \$$$$$$$\       $$ |   \$$$$$$  |$$ |  $$ |\$$$$$$$\   \$$$$  |$$ |\$$$$$$  |$$ |  $$ |$$$$$$$  |
+--  \______/  \______/ \__|       \_______|      \__|    \______/ \__|  \__| \_______|   \____/ \__| \______/ \__|  \__|\_______/ 
+
+
 
 function update_fighters(dt)
     for _, ply in ipairs({"one", "two"}) do
@@ -275,9 +357,11 @@ function update_fighters(dt)
                 fighter.text = ""
             end
         end
-        fighter_power_generation(fighter, dt)
+
+        fighter_power_generation(ply, dt)
 
         if drifting then
+            -- Code block to make the fighters shift back and forth
         end
     end
 end
@@ -298,7 +382,7 @@ function draw_fighters()
     local sprite2 = game.sprite.testguytwo.idle
 
     -- FIGHTER ONE -------------------------------------------------------------
-    if game.fighter.one.stance == game.fighter_stance_defensive then
+    if fighter_stance("one", "defensive") then
         sprite1 = game.sprite.testguy.block
     end
 
@@ -307,7 +391,7 @@ function draw_fighters()
     elseif game.fighter.one.state == game.fighter_state_attacking then
         sprite1 = game.sprite.testguy.attack
     elseif game.fighter.one.state == game.fighter_state_hurt then
-        if game.fighter.one.stance == game.fighter_stance_defensive then
+        if fighter_stance("one", "defensive") then
             sprite1 = game.sprite.testguy.block
         else
             sprite1 = game.sprite.testguy.hurt
@@ -317,7 +401,7 @@ function draw_fighters()
     love.graphics.draw(sprite1, x1 + xmod1 + xdrift1, y1 + ymod1 + ydrift1)
 
     -- FIGHTER TWO -------------------------------------------------------------
-    if game.fighter.two.stance == game.fighter_stance_defensive then
+    if fighter_stance("two", "defensive") then
         sprite2 = game.sprite.testguytwo.block
     end
 
@@ -326,7 +410,7 @@ function draw_fighters()
     elseif game.fighter.two.state == game.fighter_state_attacking then
         sprite2 = game.sprite.testguytwo.attack
     elseif game.fighter.two.state == game.fighter_state_hurt then
-        if game.fighter.two.stance == game.fighter_stance_defensive then
+        if fighter_stance("two", "defensive") then
             sprite2 = game.sprite.testguytwo.block
         else
             sprite2 = game.sprite.testguytwo.hurt

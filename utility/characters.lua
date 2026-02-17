@@ -43,8 +43,8 @@ game.character.pilot.speed = 1.2
 game.character.pilot.victory_lines_decisive = {
     "i am not putting words in your gal's mouth",
     "",
-    ""
-    ""
+    "",
+    "",
 }
 game.character.pilot.victory_lines_even = {
     "We can rebuild the world without you.",
@@ -56,7 +56,7 @@ game.character.pilot.victory_lines_clutch = {
     "hi love you deer doe please fill these out <3 <3 <3",
     "",
     "",
-    ""
+    "",
 }
 
 -- ANISE DIGATEAUX
@@ -97,7 +97,7 @@ game.character.stintz.desc = "Hey, kid."
 game.character.stintz.max_hp = 100
 game.character.stintz.speed = 1
 game.character.stintz.victory_lines_decisive = {
-    "You get mondo delirious with me again, i'll give you the ol' Detroit Overcoat!",
+    "You get mondo delirious with me again, I'll give you the ol' Detroit Overcoat!",
     "That's just how it is on this elephant's foot of an business district, kid.",
     "",
     ""
@@ -110,29 +110,16 @@ game.character.stintz.victory_lines_even = {
 }
 game.character.stintz.victory_lines_clutch = {
     "Jeez kid, calm your stickers. Ain't no need for a full frontal rushdown.",
-    "Well ain't that a continential breakfast on mercury...",
+    "Well ain't that a continential breakfast on Mercury...",
     "",
     ""
 }
 local stintz_names = {
-    "Stintz",
-    "Virgo Brainsick",
-    "Maxwell Bogus",
-    "Hugo Disgusting",
-    "Moto Sickness",
-    "Calvin Decline",
-    "Big Government",
-    "Gordon Bennett",
-    "Nucc Fugget",
-    "This !@#$ing Guy",
-    "Jeff",
-    "Sewage Fandango",
-    "Low Clearance",
-    "The Real Folk Schmooze",
-    "Adrien Grody",
-    "Hoe Malone",
-    "Cyrus the Virus",
-    "STRING FORMAT ERROR"
+    "Stintz", "Virgo Brainsick", "Maxwell Bogus", "Hugo Disgusting",
+    "Moto Sickness", "Calvin Decline", "Big Government", "Gordon Bennett",
+    "Nucc Fugget", "This !@#$ing Guy", "Jeff", "Sewage Fandango",
+    "Low Clearance", "The Real Folk Schmooze", "Adrien Grody", "Hoe Malone",
+    "Cyrus the Virus", "STRING FORMAT ERROR"
 }
 game.character.stintz.generate_name = function ()
     game.character.stintz.name = stintz_names[math.random(#stintz_names)]

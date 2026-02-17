@@ -1,3 +1,5 @@
+-- FOR DEBUGGING ---------------------------------------------------------------
+
 function quit_game()
     love.event.quit()
 end
@@ -8,7 +10,11 @@ function restart_game()
     love.event.push("quit", "restart")
 end
 
+--------------------------------------------------------------------------------
 
+
+
+-- CORE CONTROLS ---------------------------------------------------------------
 
 function start_attack(ply)
     if fighter_can_attack(ply) then
@@ -27,7 +33,9 @@ function end_attack(ply)
     end
 end
 
-function change_stance(ply,voluntary,intended_stance)
+
+
+function change_stance(ply, voluntary, intended_stance)
     if voluntary == true then
         if game.fighter[ply].power < 10 then
             love.audio.play(game.sound.ui_nope)
@@ -35,6 +43,7 @@ function change_stance(ply,voluntary,intended_stance)
             game.fighter[ply].text = "Need 10 power!"
             return
         end
+
         if game.fighter[ply].state ~= game.fighter_state_idle then
             love.audio.play(game.sound.ui_nope)
             game.fighter[ply].text_timer = 30
@@ -46,13 +55,18 @@ function change_stance(ply,voluntary,intended_stance)
      if voluntary == true then
         fighter_power_reduction_flat(game.fighter[ply], 10) -- pay 10 to change stance if changing manually
      end
+
      game.fighter[ply].stance = intended_stance
 end
 
+
+
 function stance_swap(ply)
-    if (game.fighter[ply].stance == game.fighter_stance_defensive) then
+    if fighter_stance(ply, "defensive") then
         change_stance(ply,true,game.fighter_stance_neutral)
     else
         change_stance(ply,true,game.fighter_stance_defensive)
     end
 end
+
+--------------------------------------------------------------------------------
