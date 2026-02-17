@@ -5,8 +5,6 @@ game.fighterstate_hurt = 3
 
 game.fighter = {}
 
-
-
 game.fighter.one = {
     -- States and current fighter state
     health = 100,

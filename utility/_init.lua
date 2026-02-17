@@ -46,6 +46,8 @@ function init_graphics()
     game.sprite.testguytwo.hurt =   love.graphics.newImage("gfx/testguy-hurt.png")
     game.sprite.testguytwo.idle =   love.graphics.newImage("gfx/testguy-idle.png")
     game.sprite.testguytwo.prepare =   love.graphics.newImage("gfx/testguy-prepare.png")
+
+    game.sprite.background = love.graphics.newImage("gfx/bg-testforest.png")
 end
 
 
